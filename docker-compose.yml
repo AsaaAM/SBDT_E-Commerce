@@ -1,0 +1,251 @@
+# ==============================================================================
+# SISTEM BASIS DATA TERDISTRIBUSI (SBDT) - MARKETPLACE FURNITUR (GAYA IKEA)
+# ORKESTRASI LENGKAP DOCKER COMPOSE SATU PERINTAH: docker compose up --build
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. CITUS COORDINATOR (Master Node)
+  # ----------------------------------------------------------------------------
+  citus_coordinator:
+    image: citusdata/citus:12.1
+    container_name: citus_coordinator
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      PGUSER: postgres
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=16", "-c", "max_replication_slots=16"]
+    volumes:
+      - citus_coordinator_data:/var/lib/postgresql/data
+      - ./db/00_hba.sh:/docker-entrypoint-initdb.d/00_hba.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 4s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 2. CITUS WORKER 1 (Data Shard Node 1)
+  # ----------------------------------------------------------------------------
+  citus_worker1:
+    image: citusdata/citus:12.1
+    container_name: citus_worker1
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      PGUSER: postgres
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=16", "-c", "max_replication_slots=16"]
+    volumes:
+      - citus_worker1_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 4s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 3. CITUS WORKER 2 (Data Shard Node 2)
+  # ----------------------------------------------------------------------------
+  citus_worker2:
+    image: citusdata/citus:12.1
+    container_name: citus_worker2
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      PGUSER: postgres
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=16", "-c", "max_replication_slots=16"]
+    volumes:
+      - citus_worker2_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 4s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 4. CITUS INITIALIZER (Otomasi Sharding & Inisialisasi Seed Data)
+  # ----------------------------------------------------------------------------
+  citus_init:
+    image: citusdata/citus:12.1
+    container_name: citus_init
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - ./db:/db:ro
+    depends_on:
+      citus_coordinator:
+        condition: service_healthy
+      citus_worker1:
+        condition: service_healthy
+      citus_worker2:
+        condition: service_healthy
+    command: >
+      bash -c "
+      echo '>> Menunggu kestabilan node kluster Citus...' &&
+      sleep 2 &&
+      echo '>> Menjalankan 01_schema.sql (DDL)...' &&
+      psql -h citus_coordinator -U postgres -d postgres -f /db/01_schema.sql &&
+      echo '>> Menjalankan 02_distribute.sql (Registrasi Worker & Citus Sharding)...' &&
+      psql -h citus_coordinator -U postgres -d postgres -f /db/02_distribute.sql &&
+      echo '>> Menjalankan 03_seed.sql (Akun 4 Role, Furnitur, & Inventory)...' &&
+      psql -h citus_coordinator -U postgres -d postgres -f /db/03_seed.sql &&
+      echo '>> Inisialisasi Database Terdistribusi Selesai Sukses!'
+      "
+    restart: "no"
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 5. CITUS REPLICA (Physical Streaming Replication Node)
+  # ----------------------------------------------------------------------------
+  citus_replica:
+    image: citusdata/citus:12.1
+    container_name: citus_replica
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    depends_on:
+      citus_init:
+        condition: service_completed_successfully
+    entrypoint: |
+      bash -c "
+      if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
+        echo '>> Mengambil physical streaming replica dari coordinator...'
+        until pg_basebackup -h citus_coordinator -p 5432 -U postgres -D /var/lib/postgresql/data -Fp -Xs -R; do
+          echo '>> Menunggu basebackup siap...'
+          sleep 2
+        done
+        chmod 700 /var/lib/postgresql/data
+      fi;
+      exec docker-entrypoint.sh postgres
+      "
+    volumes:
+      - citus_replica_data:/var/lib/postgresql/data
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 6. BACKEND INSTANCE 1 (Express REST API)
+  # ----------------------------------------------------------------------------
+  backend1:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend1
+    environment:
+      PORT: 5000
+      INSTANCE_ID: backend-instance-1
+      DB_HOST: citus_coordinator
+      DB_PORT: 5432
+      DB_REPLICA_HOST: citus_replica
+      DB_REPLICA_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_sbdt_ikea_2026_distributed_database_key}
+      NODE_ENV: production
+    depends_on:
+      citus_init:
+        condition: service_completed_successfully
+      citus_coordinator:
+        condition: service_healthy
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 7. BACKEND INSTANCE 2 (Express REST API - Failover & Load Balancing)
+  # ----------------------------------------------------------------------------
+  backend2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend2
+    environment:
+      PORT: 5000
+      INSTANCE_ID: backend-instance-2
+      DB_HOST: citus_coordinator
+      DB_PORT: 5432
+      DB_REPLICA_HOST: citus_replica
+      DB_REPLICA_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_sbdt_ikea_2026_distributed_database_key}
+      NODE_ENV: production
+    depends_on:
+      citus_init:
+        condition: service_completed_successfully
+      citus_coordinator:
+        condition: service_healthy
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 8. FRONTEND (Next.js App Router Standalone)
+  # ----------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_TELEMETRY_DISABLED: 1
+      BACKEND_INTERNAL_URL: http://backend1:5000
+    depends_on:
+      - backend1
+      - backend2
+    networks:
+      - ikea_sbdt_net
+
+  # ----------------------------------------------------------------------------
+  # 9. NGINX LOAD BALANCER & REVERSE PROXY
+  # ----------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_lb
+    ports:
+      - "80:80"
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend1
+      - backend2
+      - frontend
+    networks:
+      - ikea_sbdt_net
+
+# ------------------------------------------------------------------------------
+# VOLUMES & PERSISTENSI DATA
+# ------------------------------------------------------------------------------
+volumes:
+  citus_coordinator_data:
+  citus_worker1_data:
+  citus_worker2_data:
+  citus_replica_data:
+
+# ------------------------------------------------------------------------------
+# NETWORK DEDIKASI CLUSTER
+# ------------------------------------------------------------------------------
+networks:
+  ikea_sbdt_net:
+    driver: bridge

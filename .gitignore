@@ -1,0 +1,65 @@
+# ==============================================================================
+# SBDT IKEA E-COMMERCE - GIT IGNORE
+# Repository Publik: https://github.com/AsaaAM/SBDT_E-Commerce
+# ==============================================================================
+
+# 1. Environment & Secrets (DILARANG MASUK GITHUB)
+# Gunakan .env.example untuk konfigurasi template publik
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!.env.example
+
+# 2. Node Dependencies
+node_modules/
+*/node_modules/
+package-lock.json.bak
+
+# 3. Next.js Build Outputs & Cache
+.next/
+*/.next/
+out/
+build/
+dist/
+
+# 4. Runtime Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 5. OS & Editor Cache
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 6. Database Volumes & Docker Mounts
+citus_coordinator_data/
+citus_worker1_data/
+citus_worker2_data/
+citus_replica_data/
+*.dump
+*.tar.gz
+
+# 7. Uploaded Assets (Hanya simpan struktur .gitkeep)
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# 8. Temporary & Scratch Files
+tmp/
+temp/
+scratch/
+.agents/
+.gemini/

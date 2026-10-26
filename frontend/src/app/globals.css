@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ikea-blue: #0058a3;
+  --color-ikea-blue-dark: #003e73;
+  --color-ikea-yellow: #ffdb00;
+  --color-ikea-yellow-hover: #e5c500;
+  --color-ikea-gray-bg: #f5f5f5;
+  --color-ikea-border: #e2e8f0;
+}
+
+:root {
+  --ikea-blue: #0058a3;
+  --ikea-blue-dark: #003e73;
+  --ikea-yellow: #ffdb00;
+  --ikea-yellow-hover: #e5c500;
+  --ikea-gray-bg: #f5f5f5;
+  --ikea-border: #e2e8f0;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* IKEA Theme Utility Classes */
+.bg-ikea-blue {
+  background-color: #0058a3;
+}
+
+.hover\:bg-ikea-blue-dark:hover {
+  background-color: #003e73;
+}
+
+.text-ikea-blue {
+  color: #0058a3;
+}
+
+.border-ikea-blue {
+  border-color: #0058a3;
+}
+
+.bg-ikea-yellow {
+  background-color: #ffdb00;
+}
+
+.hover\:bg-ikea-yellow-hover:hover {
+  background-color: #e5c500;
+}
+
+.text-ikea-yellow {
+  color: #b45309;
+}
+
+.border-ikea-yellow {
+  border-color: #ffdb00;
+}
