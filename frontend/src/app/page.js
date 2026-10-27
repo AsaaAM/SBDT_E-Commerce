@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, Sparkles, Shield, Database, Truck, RefreshCw } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import ProductCard from '@/components/common/ProductCard';
+import HeroSlider from '@/components/common/HeroSlider';
 
 export default function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -33,46 +34,8 @@ export default function HomePage() {
 
   return (
     <div className="space-y-12 pb-16">
-      {/* 1. HERO BANNER - IKEA/Nordic Style */}
-      <section className="relative bg-gradient-to-r from-[#0058a3] to-[#00386b] text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div className="space-y-6 z-10">
-            <div className="inline-flex items-center gap-2 bg-[#ffdb00] text-slate-950 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-slate-950" />
-              <span>Sistem Basis Data Terdistribusi (Citus)</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Hunian Estetik dengan Sentuhan Nordik Skandinavia
-            </h1>
-            <p className="text-blue-100 text-sm sm:text-base leading-relaxed max-w-lg">
-              Koleksi furnitur fungsional dan modular bergaya IKEA yang didukung oleh arsitektur database terdistribusi Citus PostgreSQL dengan transparansi lokasi dan fragmentasi horizontal per gudang.
-            </p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Link
-                href="/catalog"
-                className="bg-[#ffdb00] text-slate-900 hover:bg-[#e5c500] font-bold text-sm px-6 py-3 rounded-full transition shadow-md flex items-center gap-2"
-              >
-                <span>Mulai Belanja</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/catalog?category=ruang-tamu"
-                className="bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-5 py-3 rounded-full transition border border-white/20"
-              >
-                Koleksi Ruang Tamu
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative aspect-4/3 lg:aspect-auto lg:h-[400px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10">
-            <img
-              src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80"
-              alt="Scandinavian Living Room Furniture"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </section>
+      {/* 1. HERO SLIDER DENGAN CAROUSEL GAMBAR & IKLAN INTERAKTIF (Auto 5 detik) */}
+      <HeroSlider />
 
       {/* 2. HIGHLIGHT FITUR DATABASE TERDISTRIBUSI (SBDT) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

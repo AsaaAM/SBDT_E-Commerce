@@ -223,7 +223,7 @@ export default function ProductDetailPage() {
               className={`flex-1 py-3 px-6 rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition ${
                 isOutOfStock
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  : 'bg-[#ffdb00] text-slate-900 hover:bg-[#e5c500] shadow-md active:scale-98'
+                  : 'bg-[#995F2F] text-white hover:bg-[#854f24] shadow-md active:scale-98'
               }`}
             >
               <ShoppingCart className="w-4 h-4" />

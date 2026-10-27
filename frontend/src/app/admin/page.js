@@ -396,11 +396,10 @@ export default function AdminDashboardPage() {
       <div className="flex border-b border-slate-200 gap-6 text-xs font-bold overflow-x-auto">
         <button
           onClick={() => setActiveTab('products')}
-          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${
-            activeTab === 'products'
+          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${activeTab === 'products'
               ? 'border-b-2 border-purple-600 text-purple-700'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           <Package className="w-4 h-4" />
           <span>Produk Furnitur</span>
@@ -408,11 +407,10 @@ export default function AdminDashboardPage() {
 
         <button
           onClick={() => setActiveTab('categories')}
-          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${
-            activeTab === 'categories'
+          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${activeTab === 'categories'
               ? 'border-b-2 border-purple-600 text-purple-700'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           <FolderTree className="w-4 h-4" />
           <span>Kategori</span>
@@ -420,11 +418,10 @@ export default function AdminDashboardPage() {
 
         <button
           onClick={() => setActiveTab('promos')}
-          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${
-            activeTab === 'promos'
+          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${activeTab === 'promos'
               ? 'border-b-2 border-purple-600 text-purple-700'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           <Tag className="w-4 h-4" />
           <span>Kode Promo</span>
@@ -432,11 +429,10 @@ export default function AdminDashboardPage() {
 
         <button
           onClick={() => setActiveTab('users')}
-          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${
-            activeTab === 'users'
+          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${activeTab === 'users'
               ? 'border-b-2 border-purple-600 text-purple-700'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           <Users className="w-4 h-4" />
           <span>Manajemen Pengguna</span>
@@ -444,11 +440,10 @@ export default function AdminDashboardPage() {
 
         <button
           onClick={() => setActiveTab('orders')}
-          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${
-            activeTab === 'orders'
+          className={`pb-3 flex items-center gap-1.5 transition whitespace-nowrap ${activeTab === 'orders'
               ? 'border-b-2 border-purple-600 text-purple-700'
               : 'text-slate-500 hover:text-slate-800'
-          }`}
+            }`}
         >
           <ShoppingBag className="w-4 h-4" />
           <span>Pantau Pesanan</span>
@@ -779,11 +774,10 @@ export default function AdminDashboardPage() {
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={() => handleTogglePromo(pr)}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold transition cursor-pointer ${
-                            pr.is_active
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold transition cursor-pointer ${pr.is_active
                               ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
                               : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                          }`}
+                            }`}
                           title="Klik untuk aktifkan/nonaktifkan promo"
                         >
                           {pr.is_active ? (
@@ -872,12 +866,11 @@ export default function AdminDashboardPage() {
                     <td className="py-3 px-4 font-semibold text-slate-900">{u.name}</td>
                     <td className="py-3 px-4 text-slate-600">{u.email}</td>
                     <td className="py-3 px-4">
-                      <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] uppercase ${
-                        u.role === 'owner' ? 'bg-amber-100 text-amber-800' :
-                        u.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                        u.role === 'warehouse' ? 'bg-emerald-100 text-emerald-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] uppercase ${u.role === 'owner' ? 'bg-amber-100 text-amber-800' :
+                          u.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                            u.role === 'warehouse' ? 'bg-emerald-100 text-emerald-800' :
+                              'bg-blue-100 text-blue-800'
+                        }`}>
                         {u.role}
                       </span>
                     </td>
@@ -977,13 +970,12 @@ export default function AdminDashboardPage() {
                         )}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className={`capitalize font-bold text-[10px] px-2.5 py-0.5 rounded-full border ${
-                          isDelivered
+                        <span className={`capitalize font-bold text-[10px] px-2.5 py-0.5 rounded-full border ${isDelivered
                             ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
                             : isUnpaid
-                            ? 'bg-amber-100 text-amber-800 border-amber-300'
-                            : 'bg-blue-100 text-blue-800 border-blue-300'
-                        }`}>
+                              ? 'bg-amber-100 text-amber-800 border-amber-300'
+                              : 'bg-blue-100 text-blue-800 border-blue-300'
+                          }`}>
                           {ord.status}
                         </span>
                       </td>
@@ -1156,11 +1148,10 @@ export default function AdminDashboardPage() {
                           setProdForm({ ...prodForm, image_url: asset.url });
                           setUploadSuccess('');
                         }}
-                        className={`p-1.5 rounded-lg border text-left flex items-center gap-1.5 transition ${
-                          prodForm.image_url === asset.url
+                        className={`p-1.5 rounded-lg border text-left flex items-center gap-1.5 transition ${prodForm.image_url === asset.url
                             ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-500'
                             : 'border-slate-200 bg-white hover:bg-slate-100'
-                        }`}
+                          }`}
                       >
                         <img
                           src={asset.url}
@@ -1387,11 +1378,10 @@ export default function AdminDashboardPage() {
                       key={idx}
                       type="button"
                       onClick={() => setCatForm({ ...catForm, image_url: asset.url })}
-                      className={`p-1.5 rounded-lg border text-left flex items-center gap-1.5 transition ${
-                        catForm.image_url === asset.url
+                      className={`p-1.5 rounded-lg border text-left flex items-center gap-1.5 transition ${catForm.image_url === asset.url
                           ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-500'
                           : 'border-slate-200 bg-white hover:bg-slate-100'
-                      }`}
+                        }`}
                     >
                       <img
                         src={asset.url}

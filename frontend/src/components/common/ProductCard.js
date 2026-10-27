@@ -70,7 +70,7 @@ export default function ProductCard({ product }) {
           className={`w-full py-2 px-3 rounded-lg font-medium text-xs flex items-center justify-center gap-1.5 transition ${
             isOutOfStock
               ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-              : 'bg-[#ffdb00] text-slate-900 hover:bg-[#e5c500] font-semibold active:scale-98 shadow-xs'
+              : 'bg-[#995F2F] text-white hover:bg-[#854f24] font-semibold active:scale-98 shadow-xs'
           }`}
         >
           <ShoppingCart className="w-3.5 h-3.5" />
